@@ -1,0 +1,161 @@
+int sen1 = A0,//SENSORES DE PARADA
+    sen2 = A1,
+    sen3 = A2,
+    senp = 1;
+int motor1 = 2,//desce
+    motor2 = 3;//sobe
+int bt1 = 4,//BOTOES DE ANDARES
+    bt2 = 5,
+    bt3 = 6;
+int ledgp = 7,//DETECTOR DE PORTA ABERTA 
+    ledrp = 8;//DETECTOR DE PORTA FECHADA
+int visor1 = 9,//a //PAINEL 7 SEGMENTOS
+    visor2 = 10,//c
+    visor3 = 11,//d
+    visor4 = 12,//e
+    visor5 = 13;//g
+int irandar,
+    andar;
+
+boolean movimento;
+
+
+
+void setup() {
+  pinMode(sen1, INPUT);
+  pinMode(sen2, INPUT);
+  pinMode(sen3, INPUT);
+  pinMode(motor1, OUTPUT);
+  pinMode(motor2, OUTPUT);
+  pinMode(bt1, INPUT);
+  pinMode(bt2, INPUT);
+  pinMode(bt3, INPUT);
+  pinMode(ledgp, OUTPUT);
+  pinMode(ledrp, OUTPUT);
+  pinMode(visor1, OUTPUT);
+  pinMode(visor2, OUTPUT);
+  pinMode(visor3, OUTPUT);
+  pinMode(visor4, OUTPUT);
+  pinMode(visor5, OUTPUT);
+  pinMode(senp, INPUT);
+  digitalWrite(bt1, 0);
+  digitalWrite(bt2, 0);
+  digitalWrite(bt3, 0);
+ 
+  digitalWrite(senp, 0);
+   analogWrite(sen1, 0);
+  analogWrite(sen2, 0);
+  analogWrite(sen3,0);
+Serial.begin(9600);
+}
+
+void loop() {
+
+  //variavel 5v=>0-1,
+ //tem que ser >50 pra ligar
+  int leitor1 = analogRead(sen1);
+  int leitor2 = analogRead(sen2);
+  int leitor3 = analogRead(sen3);
+
+  int leitor6 = digitalRead(bt1);
+  int leitor7 = digitalRead(bt2);
+  int leitor8 = digitalRead(bt3);
+
+
+  int leitor16 = digitalRead(senp);
+  //
+ Serial.print(leitor1);
+ Serial.print("     ");
+ Serial.print(leitor2);
+ Serial.print("     ");
+ Serial.print(leitor3);
+ Serial.print("     ");
+ Serial.print(leitor6);
+ Serial.print("     ");
+ Serial.print(leitor7);
+ Serial.print("     ");
+ Serial.print(leitor8);
+ Serial.print("     ");
+ Serial.print(leitor16);
+ Serial.print("     ");
+ Serial.println(irandar);
+ delay(100);
+  
+  if (leitor1 >= 40 && leitor1 <= 40) {
+    an1();
+  }
+  if (leitor2 >= 40 && leitor2 <= 40) {
+    an2();
+  }
+  if (leitor3 >= 40 && leitor3 <= 40) {
+    an3();
+  }
+  //
+  if (leitor16 == 1) {
+    digitalWrite(ledgp, HIGH);
+    digitalWrite(ledrp, LOW);
+    if (irandar < andar) {
+      digitalWrite(motor1, HIGH);//desce
+      digitalWrite(motor2, LOW);//sobe
+      movimento = true;
+    }
+    else 
+    if (irandar > andar) {
+      digitalWrite(motor1, LOW);
+      digitalWrite(motor2, HIGH);
+      movimento = true;
+    }
+    else 
+    if (irandar == andar) {
+      digitalWrite(motor1, LOW);
+      digitalWrite(motor2, LOW);
+      movimento = false;
+    }
+  }
+  else {
+    if (movimento == false) {
+      digitalWrite(motor1, LOW);
+      digitalWrite(motor2, LOW);
+      digitalWrite(ledgp, LOW);
+      digitalWrite(ledrp, HIGH);
+      delay(500);
+      digitalWrite(ledrp, LOW);
+      delay(500);
+    }
+    else {
+      digitalWrite(motor1, LOW);
+      digitalWrite(motor2, LOW);
+      digitalWrite(ledgp, LOW);
+      digitalWrite(ledrp, HIGH);
+    }
+  }
+  irandar = andar;
+  if (leitor6 == 1) irandar = 1;
+  if (leitor7 == 2)  irandar = 2;
+  if (leitor8 == 3)  irandar = 3;
+}
+void an1() {
+  andar = 1;
+  digitalWrite(visor2, HIGH); //c
+  digitalWrite(visor1, LOW);
+  digitalWrite(visor3, LOW);
+  digitalWrite(visor4, LOW);
+  digitalWrite(visor5, LOW);
+}
+void an2() {
+  andar = 2;
+  digitalWrite(visor1, HIGH); //a
+  digitalWrite(visor3, HIGH); //d
+  digitalWrite(visor4, HIGH); //e
+  digitalWrite(visor5, HIGH); //g
+  digitalWrite(visor2, LOW);
+}
+
+void an3() {
+  andar = 3;
+  digitalWrite(visor1, HIGH); //a
+  digitalWrite(visor2, HIGH); //c
+  digitalWrite(visor3, HIGH); //d
+  digitalWrite(visor5, HIGH); //g
+  digitalWrite(visor4, LOW);
+}
